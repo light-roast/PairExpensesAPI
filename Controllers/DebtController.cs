@@ -85,7 +85,7 @@ namespace PairXpensesAPI.Controllers
 			if (debtToUpdate != null)
 			{
 				var updated = this._debtService.UpdateDebtById(debtToUpdate, debt);
-				if(updated != null)
+				if (updated != null)
 				{
 					return Ok("Debt updated succesfully");
 				}
@@ -100,7 +100,7 @@ namespace PairXpensesAPI.Controllers
 			}
 		}
 
-		
+
 
 
 

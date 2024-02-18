@@ -7,6 +7,7 @@ namespace PairXpensesAPI.Services
 		void CreateDebt(Debt debt);
 		void DeleteDebt(Debt debt);
 		List<Debt> GetAllDebtsByUserId(int userId);
+
 		Debt? GetDebtById(int id);
 
 		Debt? UpdateDebtById(Debt debtToUpdate, DebtReq updateDebt);

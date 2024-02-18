@@ -19,7 +19,7 @@ namespace PairXpensesAPI
 		public DateTime CreateDate { get; set; } = DateTime.Now;
 
 		public DateTime UpdateDate { get; set; } = DateTime.Now;
-
+		[Required]
 		public int UserId { get; set; }
 
 	}
