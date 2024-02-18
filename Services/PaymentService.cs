@@ -47,7 +47,7 @@ namespace PairXpensesAPI.Services
 
 		public List<Payment> GetAllPaymentsByUserId(int userId)
 		{
-			return _context.Payments.Where(p => p.User.Id == userId).ToList();
+			return _context.Payments.Where(p => p.UserId == userId).ToList();
 		}
 
 		public Payment? GetPaymentById(int id)
@@ -57,7 +57,7 @@ namespace PairXpensesAPI.Services
 
 		public long GetTotalPaymentValueByUserId(int userId)
 		{
-			return _context.Payments.Where(p => p.User.Id == userId).Sum(p => p.Value);
+			return _context.Payments.Where(p => p.UserId == userId).Sum(p => p.Value);
 		}
 
 		public Payment? UpdatePaymentById(Payment paymentToUpdate, PaymentReq updatePayment)

@@ -30,9 +30,9 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpGet("user/{userId}")]
-		public IActionResult GetDebtsByUSerId(int id)
+		public IActionResult GetDebtsByUSerId(int userId)
 		{
-			List<Debt> deudas = this._debtService.GetAllDebtsByUserId(id);
+			List<Debt> deudas = this._debtService.GetAllDebtsByUserId(userId);
 			if (deudas != null)
 			{
 				return Ok(deudas);

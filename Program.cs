@@ -4,6 +4,7 @@ using PairExpensesAPI.Data;
 using PairXpensesAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("Database") ?? "Data Source=Database.db";
 
 // Add services to the container.
 
@@ -15,7 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDebtService, DebtService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddSqlite<DataContext>("DefaultConnection");
+builder.Services.AddDbContext<DataContext>(options =>
+	options.UseSqlite(connectionString));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddCors();
