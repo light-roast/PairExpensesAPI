@@ -1,4 +1,6 @@
-﻿namespace PairXpensesAPI.Services
+﻿using PairExpensesAPI.Entities;
+
+namespace PairXpensesAPI.Services
 {
 	public interface IPaymentService
 	{
@@ -7,7 +9,7 @@
 		List<Payment> GetAllPaymentsByUserId(int userId);
 		Payment? GetPaymentById(int id);
 
-		Payment? UpdatePaymentById(Payment paymentToUpdate, Payment updatePayment);
+		Payment? UpdatePaymentById(Payment paymentToUpdate, PaymentReq updatePayment);
 		long GetTotalPaymentValueByUserId(int userId);
 	}
 }

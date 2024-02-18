@@ -24,6 +24,7 @@ namespace PairXpensesAPI.MappingProfiles
 		{
 			// Inverse mapping from Payment to PaymentReq
 			CreateMap<Payment, PaymentReq>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) // Map the Id property from Payment to Id in PaymentReq
 				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name)) // Map the Name property from Payment to Name in PaymentReq
 				.ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Value)) // Map the Value property from Payment to Value in PaymentReq
 				.ForMember(dest => dest.UpdateDate, opt => opt.MapFrom(src => src.UpdateDate)) // Map the UpdateDate property from Payment to UpdateDate in PaymentReq

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using PairExpensesAPI.Data;
 using PairExpensesAPI.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,79 +11,69 @@ namespace PairXpensesAPI.Services
 {
 	public class DebtService : IDebtService
 	{
-		private readonly IMapper _mapper;	
-        public DebtService(IMapper mapper)
-        {
-			_mapper = mapper;
-        }
+		private readonly IMapper _mapper;
+		private readonly DataContext _context;
 
-        private readonly List<Debt> Debts = new List<Debt>
+		public DebtService(DataContext context, IMapper mapper)
 		{
-			new Debt
-			{
-				Id = 1,
-				Name = "Compra juego",
-				Value = 60000,
-				CreateDate = DateTime.Now,
-				UpdateDate = DateTime.Now,
-				User = new User { Id = 1, Name = "Daniel" }
-			},
-			new Debt
-			{
-				Id = 2,
-				Name = "Compra calzones",
-				Value = 600000,
-				CreateDate = DateTime.Now,
-				UpdateDate = DateTime.Now,
-				User = new User { Id = 2, Name = "Maritza" }
-			}
-		};
+			_context = context;
+			_mapper = mapper;
+		}
 
 		public void CreateDebt(Debt debt)
 		{
 			try
 			{
-				Debts.Add(debt);
-
+				_context.Debts.Add(debt);
+				_context.SaveChanges();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error al crear la deuda: {ex.Message}");
-
 			}
-			
 		}
 
 		public void DeleteDebt(Debt debt)
-		{	
-			Debts.Remove(debt);
+		{
+			_context.Debts.Remove(debt);
+			_context.SaveChanges();
 		}
-
 
 		public List<Debt> GetAllDebtsByUserId(int userId)
 		{
-			List<Debt> debtsByUser = Debts.Where(d => d.User.Id == userId).ToList();
-			return debtsByUser;
+			return _context.Debts.Where(d => d.User.Id == userId).ToList();
 		}
 
 		public Debt? GetDebtById(int id)
 		{
-			var debt = Debts.FirstOrDefault(d => d.Id == id);
-			return debt;
+			return _context.Debts.FirstOrDefault(d => d.Id == id);
 		}
 
 		public long GetTotalDebtValueByUserId(int userId)
 		{
-			
-			long totalDebtValue = Debts.Where(d => d.User.Id == userId).Sum(d => d.Value);
-			return totalDebtValue;
+			return _context.Debts.Where(d => d.User.Id == userId).Sum(d => d.Value);
 		}
 
 		public Debt? UpdateDebtById(Debt debtToUpdate, DebtReq updateDebt)
 		{
-			Debt mapped = this._mapper.Map(updateDebt, debtToUpdate);
-			debtToUpdate.UpdateDate = DateTime.Now;
-			return debtToUpdate;
+			try
+			{
+				// Map properties from DebtReq to Debt
+				_mapper.Map(updateDebt, debtToUpdate);
+
+				// Update additional properties if needed
+				debtToUpdate.UpdateDate = DateTime.Now;
+
+				_context.Entry(debtToUpdate).State = EntityState.Modified;
+				_context.SaveChanges();
+
+				return debtToUpdate;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error al actualizar la deuda: {ex.Message}");
+				return null;
+			}
 		}
 	}
 }

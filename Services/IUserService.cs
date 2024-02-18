@@ -1,4 +1,6 @@
-﻿namespace PairXpensesAPI.Services
+﻿using PairExpensesAPI.Entities;
+
+namespace PairXpensesAPI.Services
 {
 	public interface IUserService
 	{
@@ -6,7 +8,7 @@
 		void DeleteUser(User user);
 		List<User> GetAllUsers();
 
-		User? UpdateUserById(User userToUpdate, User updateUser);
+		User? UpdateUserById(User userToUpdate, UserReq updateUser);
 		
 	}
 }

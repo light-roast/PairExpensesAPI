@@ -1,43 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using PairExpensesAPI.Data;
+using PairExpensesAPI.Entities; // Import EF Core namespace
 
 namespace PairXpensesAPI.Services
 {
 	public class PaymentService : IPaymentService
 	{
-		private readonly List<Payment> Payments = new List<Payment>
+		private readonly DataContext _context;
+		private readonly IMapper _mapper;
+
+		public PaymentService(DataContext context, IMapper mapper)
 		{
-			new Payment
-			{
-				Id = 1,
-				Name = "Servicio de agua",
-				Value = 110000,
-				CreateDate = DateTime.Now,
-				UpdateDate = DateTime.Now,
-				User = new User { Id = 1, Name = "Daniel" }
-			},
-			new Payment
-			{
-				Id = 2,
-				Name = "Pizza",
-				Value = 600000,
-				CreateDate = DateTime.Now,
-				UpdateDate = DateTime.Now,
-				User = new User { Id = 2, Name = "Maritza" }
-			}
-		};
+			_context = context;
+			_mapper = mapper;
+		}
 
 		public void CreatePayment(Payment payment)
 		{
 			try
 			{
-				Payments.Add(payment);
+				_context.Payments.Add(payment);
+				_context.SaveChanges();
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Error al crear el pago: {ex.Message}");	
+				Console.WriteLine($"Error al crear el pago: {ex.Message}");
 			}
 		}
 
@@ -45,41 +36,50 @@ namespace PairXpensesAPI.Services
 		{
 			try
 			{
-				Payments.Remove(payment);
+				_context.Payments.Remove(payment);
+				_context.SaveChanges();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error al eliminar el pago: {ex.Message}");
-			
 			}
 		}
 
 		public List<Payment> GetAllPaymentsByUserId(int userId)
 		{
-			List<Payment> paymentsByUser = Payments.Where(p => p.User.Id == userId).ToList();
-			return paymentsByUser;
+			return _context.Payments.Where(p => p.User.Id == userId).ToList();
 		}
 
 		public Payment? GetPaymentById(int id)
 		{
-			var payment = Payments.FirstOrDefault(p => p.Id == id);
-			return payment;
+			return _context.Payments.FirstOrDefault(p => p.Id == id);
 		}
 
 		public long GetTotalPaymentValueByUserId(int userId)
 		{
-			long totalPaymentValue = Payments.Where(p => p.User.Id == userId).Sum(p => p.Value);
-			return totalPaymentValue;
+			return _context.Payments.Where(p => p.User.Id == userId).Sum(p => p.Value);
 		}
 
-		public Payment? UpdatePaymentById(Payment paymentToUpdate, Payment updatePayment)
+		public Payment? UpdatePaymentById(Payment paymentToUpdate, PaymentReq updatePayment)
 		{
-			
+			try
+			{
+				// Map properties from PaymentReq to Payment
+				_mapper.Map(updatePayment, paymentToUpdate);
 
-				paymentToUpdate.Name = updatePayment.Name;
-				paymentToUpdate.Value = updatePayment.Value;
+				// Update additional properties if needed
 				paymentToUpdate.UpdateDate = DateTime.Now;
+
+				_context.Entry(paymentToUpdate).State = EntityState.Modified;
+				_context.SaveChanges();
+
 				return paymentToUpdate;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error al actualizar el pago: {ex.Message}");
+				return null;
+			}
 		}
 	}
 }

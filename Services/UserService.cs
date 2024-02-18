@@ -1,40 +1,35 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using PairExpensesAPI.Data;
+using PairExpensesAPI.Entities;
+using AutoMapper;
 
 namespace PairXpensesAPI.Services
 {
 	public class UserService : IUserService
 	{
-		public List<User> Users = new List<User>
+		private readonly DataContext _context;
+		private readonly IMapper _mapper;
+
+		public UserService(DataContext context, IMapper mapper)
 		{
-			new User {
-				Id = 1,
-				Name = "Daniel",
-				Debts = new List<Debt> {},
-				Payments =  new List<Payment> {}
-			},
-			new User {
-				Id = 2,
-				Name = "Maritza",
-				Debts = new List<Debt> {},
-				Payments =  new List<Payment> {}
-			}
-		};
+			_context = context;
+			_mapper = mapper;
+		}
 
 		public void CreateUser(User user)
 		{
 			try
 			{
-				Users.Add(user);
-
-				
+				_context.Users.Add(user);
+				_context.SaveChanges();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error al crear el usuario: {ex.Message}");
-
+				throw; // Optionally, handle or log the exception
 			}
 		}
 
@@ -42,26 +37,35 @@ namespace PairXpensesAPI.Services
 		{
 			try
 			{
-				Users.Remove(user);
-
+				_context.Users.Remove(user);
+				_context.SaveChanges();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error al eliminar el usuario: {ex.Message}");
+				throw; // Optionally, handle or log the exception
 			}
 		}
 
 		public List<User> GetAllUsers()
 		{
-			return Users;
+			return _context.Users.ToList();
 		}
 
 
-		public User? UpdateUserById(User userToUpdate, User updateUser)
+		public User? UpdateUserById(User userToUpdate, UserReq updateUser)
 		{
-				userToUpdate.Name = updateUser.Name;
-	
+			try
+			{
+				_mapper.Map(updateUser, userToUpdate);
+				_context.SaveChanges();
 				return userToUpdate;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error al actualizar el usuario: {ex.Message}");
+				return null; // Handle or log the exception as needed
+			}
 		}
 	}
 }
