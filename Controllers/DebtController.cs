@@ -78,7 +78,7 @@ namespace PairXpensesAPI.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPatch("{id}")]
 		public IActionResult UpdateDebtById(int id, [FromBody] DebtReq debt)
 		{
 			var debtToUpdate = this._debtService.GetDebtById(id);

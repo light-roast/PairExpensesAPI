@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
 
 namespace PairXpensesAPI.Controllers
@@ -60,8 +61,8 @@ namespace PairXpensesAPI.Controllers
 			return Ok(payment);
 		}
 
-		[HttpPut("{id}")]
-		public IActionResult UpdatePaymentById(int id, Payment payment)
+		[HttpPatch("{id}")]
+		public IActionResult UpdatePaymentById(int id, [FromBody] PaymentReq payment)
 		{
 			var paymentToUpdate = _paymentService.GetPaymentById(id);
 			if (paymentToUpdate == null)

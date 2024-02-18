@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
 
 namespace PairXpensesAPI.Controllers
@@ -29,15 +30,23 @@ namespace PairXpensesAPI.Controllers
 			return Ok("User created successfully.");
 		}
 
-		[HttpPut("{id}")]
-		public IActionResult UpdateUserById(int id, User user)
+		[HttpPatch("{id}")]
+		public IActionResult UpdateUserById(int id, [FromBody] UserReq user)
 		{
 			var userToUpdate = _userService.GetAllUsers().FirstOrDefault(u => u.Id == id);
 			if (userToUpdate == null)
 				return NotFound("User not found.");
 
 			var updatedUser = _userService.UpdateUserById(userToUpdate, user);
-			return Ok(updatedUser);
+			if (updatedUser == null)
+			{
+				return BadRequest("Problem updating the user");
+			}
+			else
+			{
+				return Ok(updatedUser);
+			}
+			
 		}
 
 		[HttpDelete("{id}")]
