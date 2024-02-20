@@ -31,9 +31,9 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpPatch("{id}")]
-		public IActionResult UpdateUserById(int id, [FromBody] UserReq user)
+		public IActionResult UpdateUserById([FromBody] UserReq user)
 		{
-			var userToUpdate = _userService.GetAllUsers().FirstOrDefault(u => u.Id == id);
+			var userToUpdate = _userService.GetAllUsers().FirstOrDefault(u => u.Id == user.Id);
 			if (userToUpdate == null)
 				return NotFound("User not found.");
 
