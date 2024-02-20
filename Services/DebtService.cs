@@ -75,5 +75,25 @@ namespace PairXpensesAPI.Services
 				return null;
 			}
 		}
+
+		public void DeleteAllDebts()
+		{
+			try
+			{
+				var Debts = _context.Debts.ToList();
+
+				
+				_context.Debts.RemoveRange(Debts);
+
+				
+				_context.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				
+				Console.WriteLine($"An error occurred: {ex.Message}");
+			}
+		}
+	
 	}
 }

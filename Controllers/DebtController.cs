@@ -26,7 +26,7 @@ namespace PairXpensesAPI.Controllers
 				return Ok(debt);
 			}
 			else
-			{ return NotFound("Debt user id found"); }
+			{ return NotFound("Debt id no found"); }
 		}
 
 		[HttpGet("user/{userId}")]
@@ -100,6 +100,12 @@ namespace PairXpensesAPI.Controllers
 			}
 		}
 
+		[HttpDelete("deleteall")]
+		public IActionResult DeleteAllDebts()
+		{
+			_debtService.DeleteAllDebts();
+			return Ok("All Debts deleted successfully.");
+		}
 
 
 

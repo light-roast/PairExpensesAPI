@@ -81,5 +81,24 @@ namespace PairXpensesAPI.Services
 				return null;
 			}
 		}
+
+		public void DeleteAllPayments()
+		{
+			try
+			{
+				var payments = _context.Payments.ToList();
+
+				
+				_context.Payments.RemoveRange(payments);
+
+				
+				_context.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				
+				Console.WriteLine($"An error occurred: {ex.Message}");
+			}
+		}
 	}
 }

@@ -90,5 +90,12 @@ namespace PairXpensesAPI.Controllers
 			_paymentService.DeletePayment(paymentToDelete);
 			return Ok("Payment deleted successfully.");
 		}
+
+		[HttpDelete("deleteall")]
+		public IActionResult DeleteAllPayments()
+		{
+			_paymentService.DeleteAllPayments();
+			return Ok("All payments deleted successfully.");
+		}
 	}
 }

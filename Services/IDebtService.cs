@@ -12,6 +12,8 @@ namespace PairXpensesAPI.Services
 
 		Debt? UpdateDebtById(Debt debtToUpdate, DebtReq updateDebt);
 		long GetTotalDebtValueByUserId(int userId);
+
+		void DeleteAllDebts();
 	}
 }
 

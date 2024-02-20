@@ -11,5 +11,6 @@ namespace PairXpensesAPI.Services
 
 		Payment? UpdatePaymentById(Payment paymentToUpdate, PaymentReq updatePayment);
 		long GetTotalPaymentValueByUserId(int userId);
+		void DeleteAllPayments();
 	}
 }
