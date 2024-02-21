@@ -19,8 +19,9 @@ namespace PairXpensesAPI.Services
 			_mapper = mapper;
 		}
 
-		public void CreatePayment(Payment payment)
+		public void CreatePayment(PaymentReq paymentReq)
 		{
+			var payment = _mapper.Map<Payment>(paymentReq);
 			try
 			{
 				_context.Payments.Add(payment);
@@ -33,7 +34,7 @@ namespace PairXpensesAPI.Services
 		}
 
 		public void DeletePayment(Payment payment)
-		{
+		{			
 			try
 			{
 				_context.Payments.Remove(payment);

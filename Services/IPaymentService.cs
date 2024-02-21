@@ -4,7 +4,7 @@ namespace PairXpensesAPI.Services
 {
 	public interface IPaymentService
 	{
-		void CreatePayment(Payment payment);
+		void CreatePayment(PaymentReq payment);
 		void DeletePayment(Payment payment);
 		List<Payment> GetAllPaymentsByUserId(int userId);
 		Payment? GetPaymentById(int id);

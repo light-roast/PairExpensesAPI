@@ -46,7 +46,7 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult CreatePayment(Payment payment)
+		public IActionResult CreatePayment(PaymentReq payment)
 		{
 			_paymentService.CreatePayment(payment);
 			return Ok("Payment created successfully.");

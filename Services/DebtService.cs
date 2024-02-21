@@ -20,8 +20,9 @@ namespace PairXpensesAPI.Services
 			_mapper = mapper;
 		}
 
-		public void CreateDebt(Debt debt)
+		public void CreateDebt(DebtReq debtReq)
 		{
+			var debt = _mapper.Map<Debt>(debtReq);
 			try
 			{
 				_context.Debts.Add(debt);
@@ -35,6 +36,7 @@ namespace PairXpensesAPI.Services
 
 		public void DeleteDebt(Debt debt)
 		{
+			
 			_context.Debts.Remove(debt);
 			_context.SaveChanges();
 		}
