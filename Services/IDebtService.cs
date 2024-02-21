@@ -4,7 +4,7 @@ namespace PairXpensesAPI.Services
 {
 	public interface IDebtService
 	{
-		void CreateDebt(DebtReq debt);
+		void CreateDebt(Debt debt);
 		void DeleteDebt(Debt debt);
 		List<Debt> GetAllDebtsByUserId(int userId);
 

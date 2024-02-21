@@ -41,7 +41,7 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult CreateDebt([FromBody] DebtReq debt)
+		public IActionResult CreateDebt([FromBody] Debt debt)
 		{
 			this._debtService.CreateDebt(debt);
 			return Ok("Debt created successfully");
