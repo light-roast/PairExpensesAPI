@@ -47,7 +47,7 @@ namespace PairXpensesAPI.Controllers
 			return Ok("Debt created successfully");
 		}
 
-		[HttpDelete]
+		[HttpDelete("{id}")]
 		public IActionResult DeleteDebt(int id)
 		{
 			var debt = this._debtService.GetDebtById(id);
