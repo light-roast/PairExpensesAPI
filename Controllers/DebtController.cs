@@ -64,7 +64,7 @@ namespace PairXpensesAPI.Controllers
 
 		}
 
-		[HttpGet("user/total/{userId}")]
+		[HttpGet("total/{userId}")]
 		public IActionResult GetTotalDebtByUser(int userId)
 		{
 			long totalDebt = this._debtService.GetTotalDebtValueByUserId(userId);
