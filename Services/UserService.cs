@@ -47,10 +47,10 @@ namespace PairXpensesAPI.Services
 			}
 		}
 
-		public List<User> GetAllUsers()
+		public List<User> GetAllUsers(string PairRole)
 		{
-			return _context.Users.ToList();
-		}
+            return _context.Users.Where(u => u.PairRole == PairRole).ToList();
+        }
 
 
 		public User? UpdateUserById(User userToUpdate, UserReq updateUser)

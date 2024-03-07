@@ -6,7 +6,7 @@ namespace PairXpensesAPI.Services
 	{
 		void CreateUser(User user);
 		void DeleteUser(User user);
-		List<User> GetAllUsers();
+		List<User> GetAllUsers(string PairRole);
 
 		User? UpdateUserById(User userToUpdate, UserReq updateUser);
 		
