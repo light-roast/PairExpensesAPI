@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
@@ -17,8 +18,14 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpGet("user/{userId}")]
+		[Authorize(Roles="pair1, pair2")] 
 		public IActionResult GetAllPaymentsByUserId(int userId)
 		{
+			bool isPair1 = HttpContext.User.IsInRole("pair1");
+
+    
+    		bool isPair2 = HttpContext.User.IsInRole("pair2");
+			
 			var payments = _paymentService.GetAllPaymentsByUserId(userId);
 			if (payments != null)
 			{
@@ -52,14 +59,14 @@ namespace PairXpensesAPI.Controllers
 			return Ok("Payment created successfully.");
 		}
 
-		[HttpGet("{id}")]
-		public IActionResult GetPaymentById(int id)
-		{
-			var payment = _paymentService.GetPaymentById(id);
-			if (payment == null)
-				return NotFound("Payment not found.");
-			return Ok(payment);
-		}
+		// [HttpGet("{id}")]
+		// public IActionResult GetPaymentById(int id)
+		// {
+		// 	var payment = _paymentService.GetPaymentById(id);
+		// 	if (payment == null)
+		// 		return NotFound("Payment not found.");
+		// 	return Ok(payment);
+		// }
 
 		[HttpPatch("{id}")]
 		public IActionResult UpdatePaymentById(int id, [FromBody] PaymentReq payment)

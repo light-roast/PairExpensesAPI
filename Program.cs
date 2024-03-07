@@ -98,7 +98,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(builder => builder
-.AllowAnyOrigin()
+.WithOrigins("https://localhost:7105")
 	.AllowAnyMethod()
 		.AllowAnyHeader());
 

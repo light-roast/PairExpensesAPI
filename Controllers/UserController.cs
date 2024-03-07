@@ -53,27 +53,55 @@ namespace PairXpensesAPI.Controllers
         //}
 
         [HttpPatch("{id}")]
-        [Authorize]
+        [Authorize(Roles="pair1, pair2")]
         public IActionResult UpdateUserById([FromBody] UserReq user)
 		{
-            var pairRoleClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Role)?.Value;
-            if (pairRoleClaim == null)
-            {
-                return Unauthorized("The user's role could not be determined.");
-            }
-            var userToUpdate = _userService.GetAllUsers(pairRoleClaim).FirstOrDefault(u => u.Id == user.Id);
-			if (userToUpdate == null)
-				return NotFound("User not found.");
+            bool isPair1 = HttpContext.User.IsInRole("pair1");
 
-			var updatedUser = _userService.UpdateUserById(userToUpdate, user);
-			if (updatedUser == null)
+    
+    		bool isPair2 = HttpContext.User.IsInRole("pair2");
+
+			if (isPair1)
+            {
+                var userToUpdate = _userService.GetAllUsers("pair1").FirstOrDefault(u => u.Id == user.Id);
+				if (userToUpdate == null)
+					return NotFound("User not found.");
+
+				var updatedUser = _userService.UpdateUserById(userToUpdate, user);
+				if (updatedUser == null)
+				{
+					return BadRequest("Problem updating the user");
+				}
+				else
+				{
+					return Ok(updatedUser);
+				}
+            }
+			else if(isPair2)
 			{
-				return BadRequest("Problem updating the user");
+				var userToUpdate = _userService.GetAllUsers("pair2").FirstOrDefault(u => u.Id == user.Id);
+				if (userToUpdate == null)
+					return NotFound("User not found.");
+
+				var updatedUser = _userService.UpdateUserById(userToUpdate, user);
+				if (updatedUser == null)
+				{
+					return BadRequest("Problem updating the user");
+				}
+				else
+				{
+					return Ok(updatedUser);
+				}
 			}
 			else
 			{
-				return Ok(updatedUser);
+				return Unauthorized("The user's role could not be determined.");
 			}
+
+
+
+
+            
 			
 		}
 
