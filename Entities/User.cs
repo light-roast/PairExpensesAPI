@@ -17,5 +17,13 @@ namespace PairXpensesAPI
 
 		[JsonIgnore]
 		public List<Payment>? Payments { get; set; }
+
+		[Required]
+		public string? Username {get; set;}
+
+		[JsonIgnore]
+		public string? Password {get; set;}
+		[Required]
+		public string?PairRole { get; set; }
 	}
 }
