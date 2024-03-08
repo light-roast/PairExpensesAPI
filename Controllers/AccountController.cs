@@ -17,12 +17,15 @@ namespace PairExpensesAPI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly DataContext _context;
+        private readonly ILogger<AccountController> _logger;
 
+       
 
-        public AccountController(IConfiguration config, DataContext context)
+        public AccountController(IConfiguration config, DataContext context, ILogger<AccountController> logger)
         {
             _config = config;
-            _context = context; 
+            _context = context;
+            _logger = logger;
         }
 
         public class LoginModel
@@ -34,6 +37,7 @@ namespace PairExpensesAPI.Controllers
         [HttpPost("Login")]
         public IActionResult Login([FromBody] LoginModel model)
         {
+            _logger.LogInformation("Login request");
             if (model == null)
             {
                 return BadRequest("Invalid request payload");
@@ -44,12 +48,13 @@ namespace PairExpensesAPI.Controllers
                 if (user is not null)
                 {
                     var token = GenerateJwt(user);
+                    _logger.LogInformation("Login success");
                     return Ok(token);
                 }
-            }           
+            }
 
-            
 
+            _logger.LogInformation("Login failed");
             return NotFound("User not found");
         }
 

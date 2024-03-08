@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
 using System.Reflection.Metadata;
+using PairExpensesAPI.Controllers;
 
 namespace PairXpensesAPI.Controllers
 {
@@ -12,11 +13,15 @@ namespace PairXpensesAPI.Controllers
 	public class DebtController : ControllerBase
 	{
 		private readonly IDebtService _debtService;
+        private readonly ILogger<AccountController> _logger;
 
-		public DebtController(IDebtService debtService)
+  
+
+        public DebtController(IDebtService debtService, ILogger<AccountController> logger)
 		{
 			this._debtService = debtService;
-		}
+            _logger = logger;
+        }
 
 		[HttpGet("{id}")]
 		public IActionResult GetDebtById(int id)
@@ -36,7 +41,8 @@ namespace PairXpensesAPI.Controllers
 			List<Debt> deudas = this._debtService.GetAllDebtsByUserId(userId);
 			if (deudas != null)
 			{
-				return Ok(deudas);
+                _logger.LogInformation("Debts of a user returned");
+                return Ok(deudas);
 			}
 			else { return BadRequest("No debts found for the user"); }
 		}
@@ -44,8 +50,10 @@ namespace PairXpensesAPI.Controllers
 		[HttpPost]
 		public IActionResult CreateDebt([FromBody] Debt debt)
 		{
-			this._debtService.CreateDebt(debt);
-			return Ok("Debt created successfully");
+            
+            this._debtService.CreateDebt(debt);
+            _logger.LogInformation("Debt created");
+            return Ok("Debt created successfully");
 		}
 
 		[HttpDelete("{id}")]
@@ -55,7 +63,8 @@ namespace PairXpensesAPI.Controllers
 			if (debt != null)
 			{
 				this._debtService.DeleteDebt(debt);
-				return Ok("Debt deleted successfully");
+                _logger.LogInformation("Debt deleted");
+                return Ok("Debt deleted successfully");
 			}
 			else
 			{
@@ -71,7 +80,8 @@ namespace PairXpensesAPI.Controllers
 			long totalDebt = this._debtService.GetTotalDebtValueByUserId(userId);
 			if(totalDebt != -1)
 			{
-				return Ok(totalDebt);
+                _logger.LogInformation("Total debt amount of a user returned");
+                return Ok(totalDebt);
 			}
 			else
 			{
@@ -88,7 +98,8 @@ namespace PairXpensesAPI.Controllers
 				var updated = this._debtService.UpdateDebtById(debtToUpdate, debt);
 				if (updated != null)
 				{
-					return Ok(updated);
+                    _logger.LogInformation("Debt updated");
+                    return Ok(updated);
 				}
 				else
 				{
@@ -112,13 +123,16 @@ namespace PairXpensesAPI.Controllers
 			
 			if (isPair1)
 			{
-				_debtService.DeleteAllDebts("pair1");
-				return Ok("All debts deleted successfully.");
+                
+                _debtService.DeleteAllDebts("pair1");
+                _logger.LogInformation("All debts deleted for pair1");
+                return Ok("All debts deleted successfully.");
 			}
 			else if(isPair2)
 			{
 				_debtService.DeleteAllDebts("pair2");
-				return Ok("All debts deleted successfully.");
+                _logger.LogInformation("All debts deleted for pair2");
+                return Ok("All debts deleted successfully.");
 			}
 			else
 			{

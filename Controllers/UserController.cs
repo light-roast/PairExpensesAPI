@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PairExpensesAPI.Controllers;
 using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
 
@@ -12,10 +13,12 @@ namespace PairXpensesAPI.Controllers
 	public class UserController : ControllerBase
 	{
 		private readonly IUserService _userService;
+        private readonly ILogger<AccountController> _logger;
 
-		public UserController(IUserService userService)
+        public UserController(IUserService userService, ILogger<AccountController> logger)
 		{
 			_userService = userService;
+			_logger = logger;
 		}
 
         [HttpGet]
@@ -30,12 +33,14 @@ namespace PairXpensesAPI.Controllers
             if (isPair1)
             {
                 var users = _userService.GetAllUsers("pair1");
-            	return Ok(users);
+                _logger.LogInformation("Get all user from pair 1");
+                return Ok(users);
             }
 			else if(isPair2)
 			{
 				var users = _userService.GetAllUsers("pair2");
-            	return Ok(users);
+                _logger.LogInformation("Get all user from pair 2");
+                return Ok(users);
 			}
 			else
 			{
@@ -74,7 +79,8 @@ namespace PairXpensesAPI.Controllers
 				}
 				else
 				{
-					return Ok(updatedUser);
+                    _logger.LogInformation("Update user from pair 1");
+                    return Ok(updatedUser);
 				}
             }
 			else if(isPair2)
@@ -90,7 +96,8 @@ namespace PairXpensesAPI.Controllers
 				}
 				else
 				{
-					return Ok(updatedUser);
+                    _logger.LogInformation("Update user from pair 1");
+                    return Ok(updatedUser);
 				}
 			}
 			else

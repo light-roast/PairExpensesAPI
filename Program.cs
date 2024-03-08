@@ -6,9 +6,16 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PairExpensesAPI.Data;
 using PairXpensesAPI.Services;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("logs\\log.txt")
+    .CreateLogger();
+
 var connectionString = builder.Configuration.GetConnectionString("Database") ?? "Data Source=Database.db";
 
 // Add services to the container.

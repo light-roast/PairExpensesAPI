@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PairExpensesAPI.Controllers;
 using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
 
@@ -11,11 +12,13 @@ namespace PairXpensesAPI.Controllers
 	public class PaymentController : ControllerBase
 	{
 		private readonly IPaymentService _paymentService;
+        private readonly ILogger<AccountController> _logger;
 
-		public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentService paymentService, ILogger<AccountController> logger )
 		{
 			_paymentService = paymentService;
-		}
+            _logger = logger;
+        }
 
 		[HttpGet("user/{userId}")]
 		public IActionResult GetAllPaymentsByUserId(int userId)
@@ -28,7 +31,8 @@ namespace PairXpensesAPI.Controllers
 			var payments = _paymentService.GetAllPaymentsByUserId(userId);
 			if (payments != null)
 			{
-				return Ok(payments);
+                _logger.LogInformation("Payments of a user returned");
+                return Ok(payments);
 			}
 			else
 			{
@@ -42,7 +46,8 @@ namespace PairXpensesAPI.Controllers
 			long totalPaymentValue = _paymentService.GetTotalPaymentValueByUserId(userId);
 			if (totalPaymentValue != -1)
 			{
-				return Ok(totalPaymentValue);
+                _logger.LogInformation("Total payment amount of a user returned");
+                return Ok(totalPaymentValue);
 			}
 			else
 			{
@@ -55,7 +60,8 @@ namespace PairXpensesAPI.Controllers
 		public IActionResult CreatePayment(Payment payment)
 		{
 			_paymentService.CreatePayment(payment);
-			return Ok("Payment created successfully.");
+            _logger.LogInformation("Payment created");
+            return Ok("Payment created successfully.");
 		}
 
 		// [HttpGet("{id}")]
@@ -81,7 +87,8 @@ namespace PairXpensesAPI.Controllers
 			}
 			else
 			{
-				return Ok(updatedPayment);
+                _logger.LogInformation("Payment edited");
+                return Ok(updatedPayment);
 			}
 			
 		}
@@ -94,7 +101,8 @@ namespace PairXpensesAPI.Controllers
 				return NotFound("Payment not found.");
 
 			_paymentService.DeletePayment(paymentToDelete);
-			return Ok("Payment deleted successfully.");
+            _logger.LogInformation("Payment deleted");
+            return Ok("Payment deleted successfully.");
 		}
 
 		[HttpDelete("deleteall")]
@@ -109,12 +117,14 @@ namespace PairXpensesAPI.Controllers
 			if (isPair1)
 			{
 				_paymentService.DeleteAllPayments("pair1");
-				return Ok("All payments deleted successfully.");
+                _logger.LogInformation("All debts from piar1 deleted");
+                return Ok("All payments deleted successfully.");
 			}
 			else if(isPair2)
 			{
 				_paymentService.DeleteAllPayments("pair2");
-				return Ok("All payments deleted successfully.");
+                _logger.LogInformation("All debts from piar1 deleted");
+                return Ok("All payments deleted successfully.");
 			}
 			else
 			{
