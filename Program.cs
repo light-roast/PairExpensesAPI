@@ -94,7 +94,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(builder => builder
-.WithOrigins("https://localhost:7105")
+.WithOrigins("https://localhost:7105", "https://blue-ocean-00b568910.4.azurestaticapps.net/", "https://blue-ocean-00b568910.4.azurestaticapps.net")
 	.AllowAnyMethod()
 		.AllowAnyHeader());
 
