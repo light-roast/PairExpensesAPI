@@ -32,17 +32,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Pair1Only", policy => policy.RequireClaim("role", "pair1"));
-    options.AddPolicy("Pair2Only", policy => policy.RequireClaim("role", "pair2"));
-    options.AddPolicy("Pair1OrPair2", policy =>
-        policy.RequireAssertion(context =>
-            context.User.HasClaim(c => (c.Type == "role" && (c.Value == "pair1" || c.Value == "pair2")))
-        )
-    );
-});
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

@@ -18,7 +18,6 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpGet("user/{userId}")]
-		[Authorize(Roles="pair1, pair2")] 
 		public IActionResult GetAllPaymentsByUserId(int userId)
 		{
 			bool isPair1 = HttpContext.User.IsInRole("pair1");
@@ -99,10 +98,30 @@ namespace PairXpensesAPI.Controllers
 		}
 
 		[HttpDelete("deleteall")]
+		[Authorize(Roles="pair1, pair2")]
 		public IActionResult DeleteAllPayments()
 		{
-			_paymentService.DeleteAllPayments();
-			return Ok("All payments deleted successfully.");
+			bool isPair1 = HttpContext.User.IsInRole("pair1");
+
+    
+    		bool isPair2 = HttpContext.User.IsInRole("pair2");
+			
+			if (isPair1)
+			{
+				_paymentService.DeleteAllPayments("pair1");
+				return Ok("All payments deleted successfully.");
+			}
+			else if(isPair2)
+			{
+				_paymentService.DeleteAllPayments("pair2");
+				return Ok("All payments deleted successfully.");
+			}
+			else
+			{
+				return Unauthorized("The user's role could not be determined.");
+			}
+
+			
 		}
 	}
 }

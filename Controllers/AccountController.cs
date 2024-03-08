@@ -25,21 +25,32 @@ namespace PairExpensesAPI.Controllers
             _context = context; 
         }
 
-        [HttpPost("Login")]
-        public IActionResult Login(string Username, string Password)
+        public class LoginModel
         {
-            var user = Authenticate(Username, Password);
+            public string? Username { get; set; }
+            public string? Password { get; set; }
+        }
 
-            if (user is not null)
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] LoginModel model)
+        {
+            if (model == null)
             {
-                // Crear el token
-
-                var token = GenerateJwt(user);
-
-                return Ok(token);
+                return BadRequest("Invalid request payload");
             }
+            else
+            {
+                var user = Authenticate(model.Username, model.Password);
+                if (user is not null)
+                {
+                    var token = GenerateJwt(user);
+                    return Ok(token);
+                }
+            }           
 
-            return NotFound("Usuario no encontrado");
+            
+
+            return NotFound("User not found");
         }
 
 

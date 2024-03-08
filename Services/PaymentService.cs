@@ -82,17 +82,27 @@ namespace PairXpensesAPI.Services
 			}
 		}
 
-		public void DeleteAllPayments()
+		public void DeleteAllPayments(string PairRole)
 		{
 			try
 			{
-				var payments = _context.Payments.ToList();
-
 				
-				_context.Payments.RemoveRange(payments);
-
-				
-				_context.SaveChanges();
+				if(PairRole == "pair1")
+				{
+					var payments = _context.Payments.Where(p => p.UserId == 1 || p.UserId == 2).ToList();
+					_context.Payments.RemoveRange(payments);
+					_context.SaveChanges();
+				}
+				else if(PairRole == "pair2")
+				{
+					var payments = _context.Payments.Where(p => p.UserId == 3 || p.UserId == 4).ToList();
+					_context.Payments.RemoveRange(payments);
+					_context.SaveChanges();
+				}
+				else
+				{
+					throw new ArgumentException("Invalid PairRole provided. Valid values are 'pair1' and 'pair2'.", nameof(PairRole));
+				}	
 			}
 			catch (Exception ex)
 			{

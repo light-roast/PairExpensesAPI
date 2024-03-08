@@ -77,17 +77,35 @@ namespace PairXpensesAPI.Services
 			}
 		}
 
-		public void DeleteAllDebts()
+		public void DeleteAllDebts(string PairRole)
 		{
 			try
 			{
-				var Debts = _context.Debts.ToList();
+				if(PairRole == "pair1")
+				{
+					var Debts = _context.Debts.Where(d => d.UserId == 1 || d.UserId == 2).ToList();
 
-				
-				_context.Debts.RemoveRange(Debts);
+									
+					_context.Debts.RemoveRange(Debts);
 
+									
+					_context.SaveChanges();
+				}
+				else if(PairRole == "pair2")
+				{
+					var Debts = _context.Debts.Where(d => d.UserId == 3 || d.UserId == 4).ToList();
+
+									
+					_context.Debts.RemoveRange(Debts);
+
+									
+					_context.SaveChanges();
+				}
+				else
+				{
+					throw new ArgumentException("Invalid PairRole provided. Valid values are 'pair1' and 'pair2'.", nameof(PairRole));
+				}	
 				
-				_context.SaveChanges();
 			}
 			catch (Exception ex)
 			{
@@ -95,6 +113,5 @@ namespace PairXpensesAPI.Services
 				Console.WriteLine($"An error occurred: {ex.Message}");
 			}
 		}
-	
 	}
 }
