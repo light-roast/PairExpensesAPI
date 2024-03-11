@@ -1,8 +1,3 @@
----
-runme:
-  id: 01HRQ1YJFZSA4SQJXAQ3R4CRAM
-  version: v3
----
 
 # PairXpenses API - Backend project for Codigo facilito Bootcamp on web development with .NET.
 
