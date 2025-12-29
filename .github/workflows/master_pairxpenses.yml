@@ -1,66 +1,62 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - PairXpenses
+name: Compilar e implementar la aplicación de .NET Core en la aplicación web PairXpenses
 
 on:
   push:
     branches:
       - master
-  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: PairXpenses
+  AZURE_WEBAPP_PACKAGE_PATH: .\publish
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 8.0.x
+  WORKING_DIRECTORY: .
 
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
-          include-prerelease: true
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Restore
+        run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Build
+        run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+      - name: Test
+        run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
+
+      - name: Publish
+        run: dotnet publish "${{ env.WORKING_DIRECTORY }}" `
+             --configuration ${{ env.CONFIGURATION }} `
+             --no-build `
+             --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: webapp
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
   deploy:
     runs-on: windows-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D7979E3154FB427D8FEDDE86C2892A0B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_25B2757C0F924763BE22BB40EFF44B2C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4CA7B9A63A584679807EAA5DA5579A3E }}
+          name: webapp
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v3
         with:
-          app-name: 'PairXpenses'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.PairXpenses_FAC7 }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
