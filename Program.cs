@@ -94,7 +94,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(builder => builder
-.WithOrigins("https://pairxpensesapp.azurewebsites.net/", "https://pairxpensesapp.azurewebsites.net")
+.WithOrigins("https://pairxpensesapp.azurewebsites.net/", "https://pairxpensesapp.azurewebsites.net", "https://localhost:7105/")
 	.AllowAnyMethod()
 		.AllowAnyHeader());
 
