@@ -49,6 +49,7 @@ builder.Services.AddOpenApi(options =>
 builder.Services.AddScoped<IDebtService, DebtService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(connectionString));

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PairExpensesAPI.Auth;
 using PairExpensesAPI.Controllers;
 using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
@@ -23,23 +24,10 @@ namespace PairXpensesAPI.Controllers
             _logger = logger;
         }
 
-		private string? GetCallerPair()
-			=> HttpContext.User.IsInRole("pair1") ? "pair1"
-			 : HttpContext.User.IsInRole("pair2") ? "pair2"
-			 : null;
-
-		private bool IsAllowedForUser(int userId)
-		{
-			var pair = GetCallerPair();
-			if (pair is null) return false;
-			var target = _userService.GetUserById(userId);
-			return target != null && target.PairRole == pair;
-		}
-
 		[HttpGet("user/{userId}")]
 		public IActionResult GetAllPaymentsByUserId(int userId)
 		{
-			if (!IsAllowedForUser(userId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, userId)) return Forbid();
 
 			var payments = _paymentService.GetAllPaymentsByUserId(userId);
 			if (payments != null)
@@ -56,7 +44,7 @@ namespace PairXpensesAPI.Controllers
 		[HttpGet("total/{userId}")]
 		public IActionResult GetTotalPaymentValueByUserId(int userId)
 		{
-			if (!IsAllowedForUser(userId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, userId)) return Forbid();
 
 			long totalPaymentValue = _paymentService.GetTotalPaymentValueByUserId(userId);
 			if (totalPaymentValue != -1)
@@ -73,7 +61,7 @@ namespace PairXpensesAPI.Controllers
 		[HttpPost]
 		public IActionResult CreatePayment(Payment payment)
 		{
-			if (!IsAllowedForUser(payment.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, payment.UserId)) return Forbid();
 
 			_paymentService.CreatePayment(payment);
             _logger.LogInformation("Payment created");
@@ -87,7 +75,7 @@ namespace PairXpensesAPI.Controllers
 			if (paymentToUpdate == null)
 				return NotFound("Payment not found.");
 
-			if (!IsAllowedForUser(paymentToUpdate.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, paymentToUpdate.UserId)) return Forbid();
 
 			var updatedPayment = _paymentService.UpdatePaymentById(paymentToUpdate, payment);
 			if(updatedPayment == null)
@@ -108,7 +96,7 @@ namespace PairXpensesAPI.Controllers
 			if (paymentToDelete == null)
 				return NotFound("Payment not found.");
 
-			if (!IsAllowedForUser(paymentToDelete.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, paymentToDelete.UserId)) return Forbid();
 
 			_paymentService.DeletePayment(paymentToDelete);
             _logger.LogInformation("Payment deleted");
@@ -118,7 +106,7 @@ namespace PairXpensesAPI.Controllers
 		[HttpDelete("deleteall")]
 		public IActionResult DeleteAllPayments()
 		{
-			var pair = GetCallerPair();
+			var pair = this.GetCallerPair();
 			if (pair is null) return Unauthorized("The user's role could not be determined.");
 
 			_paymentService.DeleteAllPayments(pair);

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PairExpensesAPI.Auth;
 using PairExpensesAPI.Entities;
 using PairXpensesAPI.Services;
 using PairExpensesAPI.Controllers;
@@ -23,32 +24,19 @@ namespace PairXpensesAPI.Controllers
             _logger = logger;
         }
 
-		private string? GetCallerPair()
-			=> HttpContext.User.IsInRole("pair1") ? "pair1"
-			 : HttpContext.User.IsInRole("pair2") ? "pair2"
-			 : null;
-
-		private bool IsAllowedForUser(int userId)
-		{
-			var pair = GetCallerPair();
-			if (pair is null) return false;
-			var target = _userService.GetUserById(userId);
-			return target != null && target.PairRole == pair;
-		}
-
 		[HttpGet("{id}")]
 		public IActionResult GetDebtById(int id)
 		{
 			var debt = _debtService.GetDebtById(id);
 			if (debt == null) return NotFound("Debt id no found");
-			if (!IsAllowedForUser(debt.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, debt.UserId)) return Forbid();
 			return Ok(debt);
 		}
 
 		[HttpGet("user/{userId}")]
 		public IActionResult GetDebtsByUSerId(int userId)
 		{
-			if (!IsAllowedForUser(userId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, userId)) return Forbid();
 
 			List<Debt> deudas = _debtService.GetAllDebtsByUserId(userId);
 			if (deudas != null)
@@ -62,7 +50,7 @@ namespace PairXpensesAPI.Controllers
 		[HttpPost]
 		public IActionResult CreateDebt([FromBody] Debt debt)
 		{
-			if (!IsAllowedForUser(debt.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, debt.UserId)) return Forbid();
 
             _debtService.CreateDebt(debt);
             _logger.LogInformation("Debt created");
@@ -74,7 +62,7 @@ namespace PairXpensesAPI.Controllers
 		{
 			var debt = _debtService.GetDebtById(id);
 			if (debt == null) return NotFound("Debt not found");
-			if (!IsAllowedForUser(debt.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, debt.UserId)) return Forbid();
 
 			_debtService.DeleteDebt(debt);
             _logger.LogInformation("Debt deleted");
@@ -84,7 +72,7 @@ namespace PairXpensesAPI.Controllers
 		[HttpGet("total/{userId}")]
 		public IActionResult GetTotalDebtByUser(int userId)
 		{
-			if (!IsAllowedForUser(userId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, userId)) return Forbid();
 
 			long totalDebt = _debtService.GetTotalDebtValueByUserId(userId);
 			if(totalDebt != -1)
@@ -103,7 +91,7 @@ namespace PairXpensesAPI.Controllers
 		{
 			var debtToUpdate = _debtService.GetDebtById(id);
 			if (debtToUpdate == null) return BadRequest("No debt found");
-			if (!IsAllowedForUser(debtToUpdate.UserId)) return Forbid();
+			if (!this.IsAllowedForUser(_userService, debtToUpdate.UserId)) return Forbid();
 
 			var updated = _debtService.UpdateDebtById(debtToUpdate, debt);
 			if (updated != null)
@@ -120,7 +108,7 @@ namespace PairXpensesAPI.Controllers
 		[HttpDelete("deleteall")]
 		public IActionResult DeleteAllDebts()
 		{
-			var pair = GetCallerPair();
+			var pair = this.GetCallerPair();
 			if (pair is null) return Unauthorized("The user's role could not be determined.");
 
 			_debtService.DeleteAllDebts(pair);
