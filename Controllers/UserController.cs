@@ -10,6 +10,7 @@ namespace PairXpensesAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles="pair1, pair2")]
 	public class UserController : ControllerBase
 	{
 		private readonly IUserService _userService;

@@ -9,6 +9,7 @@ namespace PairXpensesAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles="pair1, pair2")]
 	public class PaymentController : ControllerBase
 	{
 		private readonly IPaymentService _paymentService;
