@@ -52,6 +52,11 @@ namespace PairXpensesAPI.Services
             return _context.Users.Where(u => u.PairRole == PairRole).ToList();
         }
 
+		public User? GetUserById(int id)
+		{
+			return _context.Users.FirstOrDefault(u => u.Id == id);
+		}
+
 
 		public User? UpdateUserById(User userToUpdate, UserReq updateUser)
 		{
