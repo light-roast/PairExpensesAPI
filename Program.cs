@@ -65,14 +65,15 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "PairXpenses API v1"));
 }
 
-app.UseCors(builder => builder
-    .WithOrigins(
-        "https://pairxpensesapp.azurewebsites.net/",
-        "https://pairxpensesapp.azurewebsites.net",
-        "http://localhost:8000",
-        "http://192.168.0.10:8000/")
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+app.UseCors(policy =>
+{
+    policy.WithOrigins("https://pairxpensesapp.azurewebsites.net")
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+
+    if (app.Environment.IsDevelopment())
+        policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
